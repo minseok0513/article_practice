@@ -12,7 +12,7 @@ public class Main {
 			}
 	public static void main(String[] args) {
 		System.out.println("== 프로그램 시작 ==");
-		makeTestDate();
+		makeTestData();
 		Scanner sc = new Scanner(System.in);
 
 		int lastArticleId = 3;
@@ -71,7 +71,7 @@ public class Main {
 				System.out.printf("작성시간 : %s\n", foundArticle.regDate);
 				System.out.printf("제목 : %s\n", foundArticle.title);
 				System.out.printf("내용 : %s\n", foundArticle.body);
-				System.out.printf("조회 : %d\n", foundArticle.hit);
+				System.out.printf("조회 : %d\n", foundArticle.hit-1);
 
 			} else if (command.startsWith("article delete ")) {
 				String[] commandBits = command.split(" ");
@@ -91,7 +91,32 @@ public class Main {
 				}
 				articles.remove(foundIndex);
 				System.out.printf("%d번 게시물이 삭제되었습니다.\n", id);
-			} else {
+			} else if (command.startsWith("article modify ")) {
+				String[] commandBits=command.split(" ");
+				int id = Integer.parseInt(commandBits[2]);
+				int foundIndex = -1;
+				
+				for (int i=0; i<articles.size(); i++) {
+					Article article = articles.get(i);
+					if(article.id==id) {
+						foundIndex=i;
+						break;
+					}
+				}
+				if(foundIndex == -1) {
+					System.out.printf("%d번 게시물은 없습니다.\n",id);
+					continue;
+				}
+				System.out.printf("수정할 제목 : ");
+				String title = sc.nextLine();
+				System.out.printf("수정할 내용 : ");
+				String body = sc.nextLine();
+				String regDate = Util.getNowDateStr();
+				Article article = new Article(id, regDate, title, body);
+				articles.add(article);
+				System.out.printf("%d번 게시글이 수정되었습니다.\n", id);
+			}
+			else {
 				System.out.println("존재하지 않는 명령어입니다.");
 				continue;
 			}
@@ -100,7 +125,7 @@ public class Main {
 
 	}
 
-	private static void makeTestDate() {
+	private static void makeTestData() {
 		System.out.println("테스트데이터 3개를 생성완료했습니다.");
 		articles.add(new Article(1, Util.getNowDateStr(), "제목 1", "내용1", 11));
 		articles.add(new Article(2, Util.getNowDateStr(), "제목 2", "내용2", 22));
