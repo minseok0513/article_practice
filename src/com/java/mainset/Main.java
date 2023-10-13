@@ -1,3 +1,5 @@
+package com.java.mainset;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -5,11 +7,13 @@ import java.util.Scanner;
 import com.java.util.Util;
 
 public class Main {
-			static List<Article> articles;
-			
-			static {
-				articles = new ArrayList();
-			}
+	static List<Article> articles;
+	static List<Member> members;
+	static {
+		articles = new ArrayList();
+		members = new ArrayList();
+	}
+
 	public static void main(String[] args) {
 		System.out.println("== 프로그램 시작 ==");
 		makeTestData();
@@ -71,7 +75,7 @@ public class Main {
 				System.out.printf("작성시간 : %s\n", foundArticle.regDate);
 				System.out.printf("제목 : %s\n", foundArticle.title);
 				System.out.printf("내용 : %s\n", foundArticle.body);
-				System.out.printf("조회 : %d\n", foundArticle.hit-1);
+				System.out.printf("조회 : %d\n", foundArticle.hit - 1);
 
 			} else if (command.startsWith("article delete ")) {
 				String[] commandBits = command.split(" ");
@@ -92,19 +96,19 @@ public class Main {
 				articles.remove(foundIndex);
 				System.out.printf("%d번 게시물이 삭제되었습니다.\n", id);
 			} else if (command.startsWith("article modify ")) {
-				String[] commandBits=command.split(" ");
+				String[] commandBits = command.split(" ");
 				int id = Integer.parseInt(commandBits[2]);
 				int foundIndex = -1;
-				
-				for (int i=0; i<articles.size(); i++) {
+
+				for (int i = 0; i < articles.size(); i++) {
 					Article article = articles.get(i);
-					if(article.id==id) {
-						foundIndex=i;
+					if (article.id == id) {
+						foundIndex = i;
 						break;
 					}
 				}
-				if(foundIndex == -1) {
-					System.out.printf("%d번 게시물은 없습니다.\n",id);
+				if (foundIndex == -1) {
+					System.out.printf("%d번 게시물은 없습니다.\n", id);
 					continue;
 				}
 				System.out.printf("수정할 제목 : ");
@@ -115,14 +119,67 @@ public class Main {
 				Article article = new Article(id, regDate, title, body);
 				articles.add(article);
 				System.out.printf("%d번 게시글이 수정되었습니다.\n", id);
-			}
-			else {
+			} else if (command.equals("member join")) {
+				int id = members.size() + 1;
+				String regDate = Util.getNowDateStr();
+				String loginId=null;
+				String loginPw=null;
+				String loginPwChk=null;
+				while (true) {
+					System.out.printf("로그인 아이디를 입력 : ");
+					loginId = sc.nextLine();
+
+					if (isJoinableLoginId(loginId) == false) {
+						System.out.println("이 아이디는 이미 존재하는 아이디 입니다.");
+						continue;
+					}
+					break;
+				}
+				while (true) {
+					System.out.printf("로그인 비번을 입력 : ");
+					loginPw = sc.nextLine();
+					System.out.printf("로그인 비번 확인 :");
+					loginPwChk = sc.nextLine();
+					if(loginPw.equals(loginPwChk)==false) {
+						System.out.println("로그인 비번을 다시 확인할 것");
+						continue;
+					}
+					break;
+				}
+
+				System.out.printf("이름을 입력 : ");
+				String name = sc.nextLine();
+				
+				Member member = new Member(loginId, loginPw, regDate, name);
+				members.add(member);
+				System.out.println("회원가입이 완료되었습니다.");
+			} else {
 				System.out.println("존재하지 않는 명령어입니다.");
 				continue;
 			}
 
 		}
 
+	}
+
+	private static boolean isJoinableLoginId(String loginId) {
+		int index = getMemberIndexByLoginId(loginId);
+
+		if (index == -1) {
+			return true;
+		}
+		return false;
+	}
+
+	private static int getMemberIndexByLoginId(String loginId) {
+		int i = 0;
+		for (Member member : members) {
+			if (member.loginId.equals(loginId)) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
 	}
 
 	private static void makeTestData() {
@@ -141,7 +198,7 @@ class Article {
 	int hit;
 
 	public Article(int id, String regDate, String title, String body) {
-		this(id, regDate,title,body,0);
+		this(id, regDate, title, body, 0);
 	}
 
 	public Article(int id, String regDate, String title, String body, int hit) {
@@ -154,5 +211,20 @@ class Article {
 
 	public void increaseHit() {
 		hit++;
+	}
+}
+
+class Member {
+	int id;
+	String loginId;
+	String loginPw;
+	String regDate;
+	String name;
+
+	Member(String loginId, String loginPw, String regDate, String name) {
+		this.loginId = loginId;
+		this.loginPw = loginPw;
+		this.regDate = regDate;
+		this.name = name;
 	}
 }
