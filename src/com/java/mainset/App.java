@@ -28,6 +28,7 @@ public class App {
 		ArticleController articleController = new ArticleController(articles, sc);
 
 		articleController.makeTestData();
+		memberController.makeTestData();
 		while (true) {
 
 			System.out.printf("명령어 ) ");
@@ -44,6 +45,8 @@ public class App {
 
 			if (command.equals("member join")) {
 				memberController.doJoin();
+			} else if (command.equals("member login")) {
+				memberController.doLogin();
 			} else if (command.startsWith("article list")) {
 				articleController.showList(command);
 			} else if (command.equals("article write")) {

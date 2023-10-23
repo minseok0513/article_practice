@@ -153,7 +153,7 @@ public class ArticleController {
 	}
 
 	public void makeTestData() {
-		System.out.println("테스트를 위한 데이터 3개 생성 완료");
+		System.out.println("테스트를 위한 게시판데이터 3개 생성 완료");
 		articles.add(new Article(1, Util.getNowDateStr(), "제목1", "내용1", 11));
 		articles.add(new Article(2, Util.getNowDateStr(), "제목2", "내용2", 22));
 		articles.add(new Article(3, Util.getNowDateStr(), "제목3", "내용3", 33));
