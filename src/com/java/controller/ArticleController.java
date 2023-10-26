@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.java.dao.ArticleDao;
 import com.java.dto.Article;
 import com.java.util.Util;
 
@@ -12,10 +13,13 @@ public class ArticleController extends Controller {
 	private Scanner sc;
 	private String command;
 	private String actionMethodName;
-
+	private ArticleDao articleDao;
 	public ArticleController(Scanner sc) {
 		this.sc = sc;
 		articles = new ArrayList<Article>();
+		
+		articleDao = new ArticleDao();
+		articles = articleDao.articles;
 	}
 
 	public void doAction(String command, String actionMethodName) {
@@ -49,7 +53,7 @@ public class ArticleController extends Controller {
 	}
 
 	private void doWrite() {
-		int id = articles.size() + 1;
+		int id = articleDao.getNewId();
 		String regDate = Util.getNowDateStr();
 		System.out.printf("제목 : ");
 		String title = sc.nextLine();
@@ -57,7 +61,7 @@ public class ArticleController extends Controller {
 		String body = sc.nextLine();
 
 		Article article = new Article(id, regDate, loginedMember.id, title, body);
-		articles.add(article);
+		articleDao.add(article);
 
 		System.out.printf("%d번 글이 생성되었습니다.\n", id);
 	}
@@ -160,8 +164,8 @@ public class ArticleController extends Controller {
 	
 	public void makeTestData() {
 		System.out.println("테스트를 위한 게시물 데이터를 생성합니다.");
-		articles.add(new Article(1, Util.getNowDateStr(), 1, "제목1", "내용1", 10));
-		articles.add(new Article(2, Util.getNowDateStr(), 2, "제목2", "내용2", 20));
-		articles.add(new Article(3, Util.getNowDateStr(), 3, "제목3", "내용3", 30));
+		articleDao.add(new Article(articleDao.getNewId(), Util.getNowDateStr(), 1, "제목1", "내용1", 10));
+		articleDao.add(new Article(articleDao.getNewId(), Util.getNowDateStr(), 2, "제목2", "내용2", 20));
+		articleDao.add(new Article(articleDao.getNewId(), Util.getNowDateStr(), 3, "제목3", "내용3", 30));
 	}
 }

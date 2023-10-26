@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.java.dao.MemberDao;
 import com.java.dto.Article;
 import com.java.dto.Member;
 import com.java.util.Util;
@@ -13,10 +14,12 @@ public class MemberController extends Controller {
 	private Scanner sc;
 	private String command;
 	private String actionMethodName;
+	private MemberDao memberDao;
 
 	public MemberController(Scanner sc) {
 		this.sc = sc;
-		members = new ArrayList<Member>();
+		memberDao = new MemberDao();
+		members = memberDao.members;
 	}
 
 	public void doAction(String command, String actionMethodName) {
@@ -38,25 +41,23 @@ public class MemberController extends Controller {
 			break;
 		}
 	}
-	
-	
 
 	private void doLogout() {
-		if ( isLogined() == false ) {
+		if (isLogined() == false) {
 			System.out.println("로그인 상태가 아닙니다.");
 			return;
 		}
-		
+
 		loginedMember = null;
 		System.out.println("로그아웃 되었습니다.");
 	}
 
 	private void doLogin() {
-		if ( isLogined()) {
+		if (isLogined()) {
 			System.out.println("이미 로그인 되어 있습니다.");
 			return;
 		}
-		
+
 		System.out.printf("로그인 아이디 : ");
 		String loginId = sc.nextLine();
 		System.out.printf("로그인 비번 : ");
@@ -80,7 +81,7 @@ public class MemberController extends Controller {
 	}
 
 	private void doJoin() {
-		int id = members.size() + 1;
+		int id = memberDao.getNewId() + 1;
 		String regDate = Util.getNowDateStr();
 
 		String loginId = null;
@@ -117,7 +118,7 @@ public class MemberController extends Controller {
 		String name = sc.nextLine();
 
 		Member member = new Member(id, regDate, loginId, loginPw, name);
-		members.add(member);
+		memberDao.add(member);
 
 		System.out.printf("%d번 회원이 생성되었습니다. 환영합니다^^\n", id);
 	}
@@ -158,8 +159,8 @@ public class MemberController extends Controller {
 
 	public void makeTestData() {
 		System.out.println("테스트를 위한 회원 데이터를 생성합니다.");
-		members.add(new Member(1, Util.getNowDateStr(), "admin", "admin", "관리자"));
-		members.add(new Member(2, Util.getNowDateStr(), "user1", "user1", "유저1"));
-		members.add(new Member(3, Util.getNowDateStr(), "user2", "user2", "유저2"));
+		memberDao.add(new Member(memberDao.getNewId(), Util.getNowDateStr(), "admin", "admin", "관리자"));
+		memberDao.add(new Member(memberDao.getNewId(), Util.getNowDateStr(), "user1", "user1", "유저1"));
+		memberDao.add(new Member(memberDao.getNewId(), Util.getNowDateStr(), "user2", "user2", "유저2"));
 	}
 }
